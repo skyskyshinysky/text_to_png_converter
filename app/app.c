@@ -2,20 +2,23 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ft2build.h>
+#include <png.h>
 #include <ctype.h>
 #include "option.h"
-
 #include FT_FREETYPE_H
-#define ADDITIONAL_ROW  6
+
+#define ADDITIONAL_ROW  25
+#define SPACE_ROW       15
 
 int init_freetype(FT_Library *, FT_Face *, const char *);
 int check_access_font_file(const char *);
 int ft_load_char_and_render_glyph(const FT_Face, const char);
 void draw(unsigned char **image, const int, const int, 
             const unsigned char *, const int, const int, const int);
-
 void draw_glyph(const FT_GlyphSlot, unsigned char **, const int, const int);
 void destruct(const int, unsigned char **, APP_OPTION *, FT_Face, FT_Library);
+int render_png_file(FILE *, const int, const int, unsigned char **);
+
 
 
 int main(int argc, char * argv [])
@@ -28,14 +31,13 @@ int main(int argc, char * argv [])
     size_t max_row = 0, max_column = 0;
     unsigned char **new_image = NULL; 
 
-
     if(parse_options(argc, argv, &app_opt))
     {
         fprintf(stderr, "[ERROR]: %s -- parse_options() fail!\n", __func__);
         return EXIT_FAILURE;
     }
 
-    if((app_opt.output_file_ptr = fopen(app_opt.output_file, "w")) == NULL)
+    if((app_opt.output_file_ptr = fopen(app_opt.output_file, "wb")) == NULL)
     {
         fprintf(stderr, "[ERROR]: %s -- fopen() fail!\n", __func__);
         return EXIT_FAILURE;
@@ -53,7 +55,7 @@ int main(int argc, char * argv [])
     {
         if(isspace(app_opt.message[count]))
         {
-            max_column += 8;
+            max_column += SPACE_ROW;
             continue;
         }
         
@@ -91,20 +93,11 @@ int main(int argc, char * argv [])
             current_width += glyph_slot->bitmap.width;   
         }
         else {
-            current_width += 8;
+            current_width += SPACE_ROW;
         }
     }
-
-    for (int y = 0; y < (max_row+ADDITIONAL_ROW); ++y)
-    {
-        for (int i = 0; i < max_column; ++i)
-        {
-            printf("%c", new_image[y][i]);
-        }
-        printf("\n");
-    }
-
-    
+    render_png_file(app_opt.output_file_ptr, max_column, max_row+ADDITIONAL_ROW, new_image);
+    destruct(max_row+ADDITIONAL_ROW, new_image, &app_opt, ft_face, ft_library);
     return EXIT_SUCCESS;
 }
 
@@ -144,7 +137,7 @@ int init_freetype(FT_Library *ft_library, FT_Face *ft_face, const char *font_fil
     	fprintf(stderr, "ERROR: %s -- FT_New_Face fail!\n", __func__);
     	return EXIT_FAILURE;
     }
-    if((ft_error = FT_Set_Pixel_Sizes(*ft_face, 0, 25)))
+    if((ft_error = FT_Set_Pixel_Sizes(*ft_face, 0, 100)))
     {
     	fprintf(stderr, "ERROR: %s -- FT_Set_Pixel_Sizes fail \n", __func__);
     	return EXIT_FAILURE;
@@ -175,7 +168,7 @@ void draw(unsigned char **image, const int rows_glyph, const int width_glyph,
 
             if(c > 128)
             {
-                image[row+max_rows_image-rows_glyph+origin][column+current_offset] = '#';
+                image[row+max_rows_image-rows_glyph+origin][column+current_offset] = 255;
             }      
         }
     }
@@ -206,4 +199,61 @@ void destruct(const int rows, unsigned char **image, APP_OPTION *app_opt, FT_Fac
     option_free(&app_opt);
     FT_Done_Face(ft_face); 
     FT_Done_FreeType(ft_library);
+}
+
+int render_png_file(FILE *output_file, const int width, const int height, unsigned char **image)
+{
+    png_structp png_output = NULL;
+    png_infop png_info = NULL;
+    int count = 0;
+    unsigned char* rowptr = NULL;
+    
+    if((png_output = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
+    {
+        fprintf(stderr, "[ERROR]: %s -- png_create_write_struct() fail!\n", __func__);
+        return EXIT_FAILURE;
+    }
+
+    if((png_info = png_create_info_struct(png_output)) == NULL)
+    {
+        fprintf(stderr, "[ERROR]: %s -- png_create_info_struct() fail!\n", __func__);
+        return EXIT_FAILURE;
+    }
+
+    if(setjmp(png_jmpbuf(png_output)))
+    {
+        fprintf(stderr, "[ERROR]: %s -- png init io fail!\n", __func__);
+        return EXIT_FAILURE;
+    }
+    png_init_io(png_output, output_file);
+    
+    if (setjmp(png_jmpbuf(png_output)))
+	{
+		fprintf(stderr, "[ERROR]: IHDR write\n");
+		return EXIT_FAILURE;
+	}
+
+    png_set_IHDR(png_output, png_info, width, height, 8, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+    png_write_info(png_output, png_info);
+
+    if (setjmp(png_jmpbuf(png_output)))
+	{
+		fprintf(stderr, "ERROR: png write\n");
+		return EXIT_FAILURE;
+	}
+
+    for (; count < height; ++count)
+	{
+		rowptr = image[count];
+		png_write_row(png_output, rowptr);
+	}
+	if (setjmp(png_jmpbuf(png_output)))
+	{
+		fprintf(stderr, "ERROR: png end\n");
+		return EXIT_FAILURE;
+	}
+	png_write_end(png_output, NULL);
+    png_destroy_write_struct (&png_output, (png_infopp)NULL);
+    return EXIT_SUCCESS;
 }

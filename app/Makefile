@@ -1,7 +1,7 @@
 
 CC = gcc
 CFLAGS += -Wall -g -pedantic
-LDFLAGS += -L/usr/local/lib -lfreetype
+LDFLAGS += -L/usr/local/lib -lfreetype -lpng
 SOURCES=option.c app.c 
 OBJECTS=$(SOURCES:.c=.o)
 INCLUDE=-I/usr/include/freetype2/
