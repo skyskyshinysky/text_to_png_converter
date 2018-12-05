@@ -1,0 +1,119 @@
+mkdir -pv build 
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftbase.c -o src/base/ftbase.o
+cp -f src/base/ftbase.o build
+rm -f src/base/ftbase.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftbbox.c -o src/base/ftbbox.o
+cp -f src/base/ftbbox.o build
+rm -f src/base/ftbbox.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftbdf.c -o src/base/ftbdf.o
+cp -f src/base/ftbdf.o build
+rm -f src/base/ftbdf.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftbitmap.c -o src/base/ftbitmap.o
+cp -f src/base/ftbitmap.o build
+rm -f src/base/ftbitmap.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftcid.c -o src/base/ftcid.o
+cp -f src/base/ftcid.o build
+rm -f src/base/ftcid.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftfntfmt.c -o src/base/ftfntfmt.o
+cp -f src/base/ftfntfmt.o build
+rm -f src/base/ftfntfmt.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftfstype.c -o src/base/ftfstype.o
+cp -f src/base/ftfstype.o build
+rm -f src/base/ftfstype.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftgasp.c -o src/base/ftgasp.o
+cp -f src/base/ftgasp.o build
+rm -f src/base/ftgasp.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftglyph.c -o src/base/ftglyph.o
+cp -f src/base/ftglyph.o build
+rm -f src/base/ftglyph.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftgxval.c -o src/base/ftgxval.o
+cp -f src/base/ftgxval.o build
+rm -f src/base/ftgxval.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftlcdfil.c -o src/base/ftlcdfil.o
+cp -f src/base/ftlcdfil.o build
+rm -f src/base/ftlcdfil.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftmm.c -o src/base/ftmm.o
+cp -f src/base/ftmm.o build
+rm -f src/base/ftmm.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftotval.c -o src/base/ftotval.o
+cp -f src/base/ftotval.o build
+rm -f src/base/ftotval.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftpatent.c -o src/base/ftpatent.o
+cp -f src/base/ftpatent.o build
+rm -f src/base/ftpatent.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftpfr.c -o src/base/ftpfr.o
+cp -f src/base/ftpfr.o build
+rm -f src/base/ftpfr.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftstroke.c -o src/base/ftstroke.o
+cp -f src/base/ftstroke.o build
+rm -f src/base/ftstroke.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftsynth.c -o src/base/ftsynth.o
+cp -f src/base/ftsynth.o build
+rm -f src/base/ftsynth.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/fttype1.c -o src/base/fttype1.o
+cp -f src/base/fttype1.o build
+rm -f src/base/fttype1.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/base/ftwinfnt.c -o src/base/ftwinfnt.o
+cp -f src/base/ftwinfnt.o build
+rm -f src/base/ftwinfnt.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/truetype/truetype.c -o src/truetype/truetype.o
+cp -f src/truetype/truetype.o build
+rm -f src/truetype/truetype.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/type1/type1.c -o src/type1/type1.o
+cp -f src/type1/type1.o build
+rm -f src/type1/type1.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/cff/cff.c -o src/cff/cff.o
+cp -f src/cff/cff.o build
+rm -f src/cff/cff.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/cid/type1cid.c -o src/cid/type1cid.o
+cp -f src/cid/type1cid.o build
+rm -f src/cid/type1cid.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/pfr/pfr.c -o src/pfr/pfr.o
+cp -f src/pfr/pfr.o build
+rm -f src/pfr/pfr.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/type42/type42.c -o src/type42/type42.o
+cp -f src/type42/type42.o build
+rm -f src/type42/type42.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/winfonts/winfnt.c -o src/winfonts/winfnt.o
+cp -f src/winfonts/winfnt.o build
+rm -f src/winfonts/winfnt.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/pcf/pcf.c -o src/pcf/pcf.o
+cp -f src/pcf/pcf.o build
+rm -f src/pcf/pcf.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/bdf/bdf.c -o src/bdf/bdf.o
+cp -f src/bdf/bdf.o build
+rm -f src/bdf/bdf.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/sfnt/sfnt.c -o src/sfnt/sfnt.o
+cp -f src/sfnt/sfnt.o build
+rm -f src/sfnt/sfnt.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/autofit/autofit.c -o src/autofit/autofit.o
+cp -f src/autofit/autofit.o build
+rm -f src/autofit/autofit.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/pshinter/pshinter.c -o src/pshinter/pshinter.o
+cp -f src/pshinter/pshinter.o build
+rm -f src/pshinter/pshinter.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/raster/raster.c -o src/raster/raster.o
+cp -f src/raster/raster.o build
+rm -f src/raster/raster.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/smooth/smooth.c -o src/smooth/smooth.o
+cp -f src/smooth/smooth.o build
+rm -f src/smooth/smooth.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/cache/ftcache.c -o src/cache/ftcache.o
+cp -f src/cache/ftcache.o build
+rm -f src/cache/ftcache.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/gzip/ftgzip.c -o src/gzip/ftgzip.o
+cp -f src/gzip/ftgzip.o build
+rm -f src/gzip/ftgzip.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/lzw/ftlzw.c -o src/lzw/ftlzw.o
+cp -f src/lzw/ftlzw.o build
+rm -f src/lzw/ftlzw.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/bzip2/ftbzip2.c -o src/bzip2/ftbzip2.o
+cp -f src/bzip2/ftbzip2.o build
+rm -f src/bzip2/ftbzip2.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/psaux/psaux.c -o src/psaux/psaux.o
+cp -f src/psaux/psaux.o build
+rm -f src/psaux/psaux.o
+gcc -I./builds/unix -I./include -I../zlib/ -I./include/ -I./include/freetype/config/ -c -Wall -O2 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -DFT_CONFIG_OPTION_USE_PNG "-DFT_CONFIG_CONFIG_H=<ftconfig.h>" -DFT2_BUILD_LIBRARY -DHAVE_FCNTL_H "-DFT_CONFIG_MODULES_H=<ftmodule.h>" src/psnames/psnames.c -o src/psnames/psnames.o
+cp -f src/psnames/psnames.o build
+rm -f src/psnames/psnames.o
+ar cr libfreetype.a build/*.o

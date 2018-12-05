@@ -6,6 +6,19 @@
 #include <ctype.h>
 #include "option.h"
 #include FT_FREETYPE_H
+#include <ft2build.h>
+
+#ifdef DYNAMIC_APP
+#include <dlfcn.h>
+void *d_freetype = NULL, *d_libpng = NULL, *d_zlib = NULL;
+
+#define LIBZ_PATH           ""
+#define LIBPNG_PATH         ""
+#define LIBFREETYPE_PATH    ""
+
+int init_zlib_shared(void);
+
+#endif
 
 #define ADDITIONAL_ROW  25
 #define SPACE_ROW       15
@@ -13,13 +26,11 @@
 int init_freetype(FT_Library *, FT_Face *, const char *);
 int check_access_font_file(const char *);
 int ft_load_char_and_render_glyph(const FT_Face, const char);
-void draw(unsigned char **image, const int, const int, 
-            const unsigned char *, const int, const int, const int);
-void draw_glyph(const FT_GlyphSlot, unsigned char **, const int, const int);
-void destruct(const int, unsigned char **, APP_OPTION *, FT_Face, FT_Library);
-int render_png_file(FILE *, const int, const int, unsigned char **);
-
-
+void draw(unsigned char **image, const size_t, const size_t, 
+            const unsigned char *, const size_t, const FT_Pos, const size_t);
+void draw_glyph(const FT_GlyphSlot, unsigned char **, const size_t, const size_t);
+int destruct(const size_t, unsigned char **, APP_OPTION *, FT_Face, FT_Library);
+int render_png_file(FILE *, const size_t, const size_t, unsigned char **);
 
 int main(int argc, char * argv [])
 {
@@ -27,9 +38,15 @@ int main(int argc, char * argv [])
     FT_Library ft_library = NULL;
     FT_Face ft_face = NULL;
     FT_GlyphSlot glyph_slot = NULL;
-    int count = 0, current_width = 0;
-    size_t max_row = 0, max_column = 0;
-    unsigned char **new_image = NULL; 
+    size_t count = 0, max_row = 0, max_column = 0, current_width = 0;
+    unsigned char **new_image = NULL;
+
+#ifdef DYNAMIC_APP
+    if(init_zlib_shared())
+    {
+        return EXIT_FAILURE;
+    }
+#endif
 
     if(parse_options(argc, argv, &app_opt))
     {
@@ -103,6 +120,28 @@ int main(int argc, char * argv [])
 
 int ft_load_char_and_render_glyph(const FT_Face ft_face, const char char_code)
 {
+#ifdef DYNAMIC_APP
+    FT_Error (*FT_Render_Glyph)(FT_GlyphSlot, FT_Render_Mode);
+    FT_Error (*FT_Load_Char)(FT_Face, FT_ULong, FT_Int32);
+    char * error_message = NULL;
+    
+    FT_Load_Char = dlsym(d_freetype, "FT_Load_Char");
+    error = dlerror();
+    if(error != NULL) 
+    {
+        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Load_Char\"); failed : %s\n", __func__, error);
+    	return EXIT_FAILURE;
+    }
+
+    FT_Render_Glyph = dlsym(d_freetype, "FT_Render_Glyph");
+    error = dlerror();
+    if(error != NULL) 
+    {
+        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Render_Glyph\"); failed : %s\n", __func__, error);
+    	return EXIT_FAILURE;
+    }
+#endif
+
     if(FT_Load_Char(ft_face, (FT_ULong) char_code, FT_LOAD_RENDER))
     {
         fprintf(stderr, "[WARNING]: %c -- FT_Load_Char() fail!\n", char_code);
@@ -112,7 +151,7 @@ int ft_load_char_and_render_glyph(const FT_Face ft_face, const char char_code)
     if((FT_Render_Glyph(ft_face->glyph, FT_RENDER_MODE_NORMAL)))
     {
         fprintf(stderr, "ERROR: fail function FT_Render_Glyph\n");
-        return EXIT_SUCCESS;
+        return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }
@@ -121,9 +160,43 @@ int init_freetype(FT_Library *ft_library, FT_Face *ft_face, const char *font_fil
 {
     FT_Error ft_error;
 
+#ifdef DYNAMIC_APP
+    char * error_message = NULL;
+    FT_Error (*FT_Init_FreeType)(FT_Library*);
+    FT_Error (*FT_New_Face)(FT_Library, const char*, FT_Long, FT_Face *);
+    FT_Error (*FT_Set_Pixel_Sizes)(FT_Face, FT_UInt, FT_UInt);
+
+    d_freetype = dlopen(LIBFREETYPE_PATH, RTLD_LAZY);
+    if(!d_freetype)
+    {
+    	fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+    	return EXIT_FAILURE;
+    }
+    FT_Init_FreeType = dlsym(d_freetype, "FT_Init_FreeType");
+    error = dlerror();
+    if(error != NULL) 
+    {
+    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_Init_FreeType\"); fail : %s\n", __func__, error);
+    	return EXIT_FAILURE;
+    }
+    FT_New_Face = dlsym(d_freetype, "FT_New_Face");
+    error = dlerror();
+    if(error != NULL) 
+    {
+    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_New_Face\"); failed : %s\n", __func__, error);
+    	return EXIT_FAILURE;
+    }
+    FT_Set_Pixel_Sizes = dlsym(d_freetype, "FT_Set_Pixel_Sizes");
+    error = dlerror();
+    if(error != NULL) {
+    	printf("[ERROR]: %s -- dlsym(dfreetype, \"FT_Set_Pixel_Sizes\"); failed : %s\n", __func__, error);
+    	return EXIT_FAILURE;
+    }
+#endif
+
     if((ft_error = FT_Init_FreeType(ft_library)))
     {
-    	fprintf(stderr, "[ERROR]: %s -- FT_Init_FreeType() fail!\n", __func__);
+    	fprintf(stderr, "[ERROR]: %s() -- FT_Init_FreeType() fail!\n", __func__);
     	return EXIT_FAILURE;
     }
 
@@ -134,12 +207,12 @@ int init_freetype(FT_Library *ft_library, FT_Face *ft_face, const char *font_fil
 
     if((ft_error = FT_New_Face(*ft_library, font_file, 0, ft_face)) == FT_Err_Unknown_File_Format)
     {
-    	fprintf(stderr, "ERROR: %s -- FT_New_Face fail!\n", __func__);
+    	fprintf(stderr, "[ERROR]: %s() -- FT_New_Face fail!\n", __func__);
     	return EXIT_FAILURE;
     }
     if((ft_error = FT_Set_Pixel_Sizes(*ft_face, 0, 100)))
     {
-    	fprintf(stderr, "ERROR: %s -- FT_Set_Pixel_Sizes fail \n", __func__);
+    	fprintf(stderr, "[ERROR]: %s() -- FT_Set_Pixel_Sizes fail!\n", __func__);
     	return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
@@ -156,28 +229,29 @@ int check_access_font_file(const char *path_file)
     return EXIT_SUCCESS;
 }
 
-void draw(unsigned char **image, const int rows_glyph, const int width_glyph, 
-            const unsigned char *bitmap_buffer, const int max_rows_image,
-            const int origin, const int current_offset)
+void draw(unsigned char **image, const size_t rows_glyph, const size_t width_glyph, 
+            const unsigned char *bitmap_buffer, const size_t max_rows_image,
+            const FT_Pos origin, const size_t current_offset)
 {
-    for (int row = 0; row < rows_glyph; ++row)
+
+    for (size_t row = 0; row < rows_glyph; ++row)
     {
-        for (int column = 0; column < width_glyph; ++column)
+        for (size_t column = 0; column < width_glyph; ++column)
         {
             unsigned char c = bitmap_buffer[row * width_glyph + column]; 
 
             if(c > 128)
             {
-                image[row+max_rows_image-rows_glyph+origin][column+current_offset] = 255;
+                image[row+max_rows_image-rows_glyph+(size_t)origin][column+current_offset] = 255;
             }      
         }
     }
 }
 
 void draw_glyph(const FT_GlyphSlot glyph_slot, unsigned char **image, 
-    const int max_rows_image, const int current_offset)
+    const size_t max_rows_image, const size_t current_offset)
 {
-    int origin = 0;
+    FT_Pos origin = 0;
 
     if((glyph_slot->metrics.height >> 6) > glyph_slot->bitmap_top)
     {
@@ -188,9 +262,30 @@ void draw_glyph(const FT_GlyphSlot glyph_slot, unsigned char **image,
         glyph_slot->bitmap.buffer, max_rows_image, origin, current_offset);
 }
 
-void destruct(const int rows, unsigned char **image, APP_OPTION *app_opt, FT_Face ft_face, FT_Library ft_library)
+int destruct(const size_t rows, unsigned char **image, APP_OPTION *app_opt, FT_Face ft_face, FT_Library ft_library)
 {
-    int count = 0;
+    size_t count = 0;
+
+#ifdef DYNAMIC_APP
+    FT_Error (*FT_Done_FreeType)(FT_Library);
+ 	FT_Error (*FT_Render_Glyph)(FT_GlyphSlot, FT_Render_Mode); 
+    char * error = NULL;
+    FT_Done_Face = dlsym(d_freetype, "FT_Done_Face");
+    error = dlerror();
+    if(error != NULL) 
+    {
+    	printf("dlsym(d_freetype, \"FT_Done_Face\"); failed : %s\n", error);
+    	return EXIT_FAILURE;
+    }
+    FT_Done_FreeType = dlsym(d_freetype, "FT_Done_FreeType");
+    error = dlerror();
+    if(error != NULL) 
+    {
+    	printf("dlsym(d_freetype, \"FT_Done_FreeType\"); failed : %s\n", error);
+    	return EXIT_FAILURE;
+    }
+#endif
+    
     for(; count < rows; count++)
     {
         free(image[count]);
@@ -199,14 +294,77 @@ void destruct(const int rows, unsigned char **image, APP_OPTION *app_opt, FT_Fac
     option_free(&app_opt);
     FT_Done_Face(ft_face); 
     FT_Done_FreeType(ft_library);
+
+    return EXIT_SUCCESS;
 }
 
-int render_png_file(FILE *output_file, const int width, const int height, unsigned char **image)
+int render_png_file(FILE *output_file, const size_t width, const size_t height, unsigned char **image)
 {
     png_structp png_output = NULL;
     png_infop png_info = NULL;
-    int count = 0;
+    size_t count = 0;
     unsigned char* rowptr = NULL;
+
+#ifdef DYNAMIC_APP
+    char * error_message = NULL;
+    png_structp (*png_create_write_struct)(png_const_charp, png_voidp, png_error_ptr, png_error_ptr);
+    png_infop (*png_create_info_struct)(png_structp);
+    jmp_buf* (*png_jmpbuf)(png_structp, png_longjmp_ptr, size_t);
+    void (*png_init_io)(png_structp, png_FILE_p);
+    void (*png_set_IHDR)(png_structp, png_infop, png_uint_32, png_uint_32, int, int, int, int, int);
+    void (*png_write_info)(png_structp, png_infop);
+    void (*png_write_row)(png_structp, png_const_bytep);
+    void (*png_write_end)(png_structp, png_infop);
+
+    d_libpng = dlopen(LIBPNG_PATH, RTLD_LAZY);
+    if(!d_libpng)
+    {
+    	fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+    	return EXIT_FAILURE;
+    }
+    png_create_write_struct = dlsym(d_libpng, "png_create_write_struct");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_create_write_struct\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_create_info_struct = dlsym(d_libpng, "png_create_info_struct");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_create_info_struct\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_init_io = dlsym(d_libpng, "png_init_io");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_init_io\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_set_IHDR = dlsym(d_libpng, "png_set_IHDR");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(d_libpng, \"png_set_IHDR\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_write_info = dlsym(d_libpng, "png_write_info");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_write_info\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_write_row = dlsym(d_libpng, "png_write_row");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_write_row\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    png_write_end = dlsym(d_libpng, "png_write_end");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_write_end\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+#endif
     
     if((png_output = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
     {
@@ -233,7 +391,7 @@ int render_png_file(FILE *output_file, const int width, const int height, unsign
 		return EXIT_FAILURE;
 	}
 
-    png_set_IHDR(png_output, png_info, width, height, 8, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_set_IHDR(png_output, png_info, (png_uint_32) width, (png_uint_32) height, 8, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
     png_write_info(png_output, png_info);
 
@@ -257,3 +415,16 @@ int render_png_file(FILE *output_file, const int width, const int height, unsign
     png_destroy_write_struct (&png_output, (png_infopp)NULL);
     return EXIT_SUCCESS;
 }
+
+#ifdef DYNAMIC_APP
+int init_zlib_shared(void)
+{
+    d_zlib = dlopen(LIBZ_PATH, RTLD_NOW | RTLD_GLOBAL);
+	if(!dzlib) 
+	{
+		fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+		return EXIT_FAILURE;
+	}
+    return EXIT_SUCCESS;
+}
+#endif
