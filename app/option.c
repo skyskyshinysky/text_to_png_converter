@@ -126,6 +126,11 @@ int parse_options(int argc, char * argv [], APP_OPTION *opt)
         }
     }
 
+    if(opt->ttf_file == NULL || opt->message == NULL)
+    {
+        help(argv[0]);
+    }
+
     fprintf(stdout, "Log file:      %s\n"
                     "TTF file:      %s\n"
                     "Message:       %s\n"
@@ -158,13 +163,11 @@ void help(char *prog_name)
 {
     fprintf(stdout, "Usage %s [OPTIONS] \n"
         "OPTIONS: \n"
-        "           -d, --debug         <-- Enable debug mode\n"
         "           -h, --help          <-- Print help message and exit\n"
-        "           -l, --log-file      <-- Set log file path\n"
         "           -t, --ttf-file      <-- Set ttf file\n"
         "           -m, --message       <-- Set output message\n"
-        "           -f, --file-output   <-- Set name output file\n"
-        "           -g, --grade         <-- Set grade log message\n", prog_name);
+        "           -f, --file-output   <-- Set name output file\n", prog_name);
+        exit(0);
 }
 
 void option_free(APP_OPTION ** opt)

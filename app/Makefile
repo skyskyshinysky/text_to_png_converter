@@ -28,8 +28,11 @@ app.lo : app.c
 	$(CC) $(CFLAGS) -DPIC -c $< $(INCLUDE) -o $@ -DDYNAMIC_APP -DLIBZ_PATH=\"$(SHARED_LIBZ_PATH)\" \
 	-DLIBPNG_PATH=\"$(SHARED_LIBPNG_PATH)\" -DLIBFREETYPE_PATH=\"$(SHARED_LIBFREETYPE_PATH)\"
 
-.c.o:
+app.o: app.c
 	$(CC) $(CFLAGS) -c $< $(INCLUDE)
+
+option.o: option.c
+	$(CC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf ./*.o ./*.lo  ./app_static ./app.output ./app_shared
