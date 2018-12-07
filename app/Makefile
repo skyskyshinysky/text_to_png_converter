@@ -1,11 +1,10 @@
-
 CC = gcc
 CFLAGS += -Wall -g -pedantic -Wextra -Wstrict-aliasing=2 -Wformat-security \
 -Wc++-compat -Wbad-function-cast -Wstrict-overflow=5 -Wfloat-equal \
 -Wformat-extra-args -Wshadow -Winit-self -Wconversion
 LDFLAGS += -L/usr/local/lib -lfreetype -lpng
-LIBS=$(STATIC_LIB_DIR)/* -lm
-SHARED_LIBS=$(SHARED_LIB_DIR)/*
+LIBS=$(if $(STATIC_LIB_DIR),$(STATIC_LIB_DIR)/*,) -lm
+SHARED_LIBS=-ldl
 
 SOURCES=option.c app.c 
 OBJECTS=$(SOURCES:.c=.o)
@@ -17,13 +16,17 @@ INCLUDE=-I../lib/freetype-2.9/include -I../lib/freetype-2.9/include/freetype/con
 all: $(SOURCES) static shared
 
 shared: $(OBJECTS_SHARED)
-	$(CC) $(OBJECTS_SHARED) $(SHARED_LIBS) -o app_shared -D DYNAMIC_APP
+	$(CC) $(OBJECTS_SHARED) $(SHARED_LIBS) -o app_shared 
 
 static: $(OBJECTS)
 	$(CC) -static $(OBJECTS) $(LIBS) -o app_static 
 
-%.lo : %.c
-	$(CC) -DPIC -c $< $(INCLUDE) -o $@
+option.lo : option.c
+	$(CC) -g -DPIC -c $< -o $@
+
+app.lo : app.c
+	$(CC) $(CFLAGS) -DPIC -c $< $(INCLUDE) -o $@ -DDYNAMIC_APP -DLIBZ_PATH=\"$(SHARED_LIBZ_PATH)\" \
+	-DLIBPNG_PATH=\"$(SHARED_LIBPNG_PATH)\" -DLIBFREETYPE_PATH=\"$(SHARED_LIBFREETYPE_PATH)\"
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< $(INCLUDE)

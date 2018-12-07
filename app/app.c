@@ -6,15 +6,13 @@
 #include <ctype.h>
 #include "option.h"
 #include FT_FREETYPE_H
-#include <ft2build.h>
 
 #ifdef DYNAMIC_APP
 #include <dlfcn.h>
-void *d_freetype = NULL, *d_libpng = NULL, *d_zlib = NULL;
+//#define png_jmpbuf(png_ptr) (*png_set_longjmp_fn((png_ptr), longjmp, (sizeof (jmp_buf))))
+// /#  define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 
-#define LIBZ_PATH           ""
-#define LIBPNG_PATH         ""
-#define LIBFREETYPE_PATH    ""
+void *d_freetype = NULL, *d_libpng = NULL, *d_zlib = NULL;
 
 int init_zlib_shared(void);
 
@@ -121,25 +119,28 @@ int main(int argc, char * argv [])
 int ft_load_char_and_render_glyph(const FT_Face ft_face, const char char_code)
 {
 #ifdef DYNAMIC_APP
-    FT_Error (*FT_Render_Glyph)(FT_GlyphSlot, FT_Render_Mode);
-    FT_Error (*FT_Load_Char)(FT_Face, FT_ULong, FT_Int32);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+    FT_Error (*FT_Render_Glyph)(FT_GlyphSlot, FT_Render_Mode) = NULL;
+    FT_Error (*FT_Load_Char)(FT_Face, FT_ULong, FT_Int32) = NULL;
     char * error_message = NULL;
     
-    FT_Load_Char = dlsym(d_freetype, "FT_Load_Char");
-    error = dlerror();
-    if(error != NULL) 
+    *(void **) (&FT_Load_Char) = dlsym(d_freetype, "FT_Load_Char");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Load_Char\"); failed : %s\n", __func__, error);
+        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Load_Char\"); failed : %s\n", __func__, error_message);
     	return EXIT_FAILURE;
     }
 
-    FT_Render_Glyph = dlsym(d_freetype, "FT_Render_Glyph");
-    error = dlerror();
-    if(error != NULL) 
+    *(void **) (&FT_Render_Glyph) = dlsym(d_freetype, "FT_Render_Glyph");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Render_Glyph\"); failed : %s\n", __func__, error);
+        fprintf(stderr, "[ERROR]: %s -- dlsym(d_freetype, \"FT_Render_Glyph\"); failed : %s\n", __func__, error_message);
     	return EXIT_FAILURE;
     }
+#pragma GCC diagnostic pop
 #endif
 
     if(FT_Load_Char(ft_face, (FT_ULong) char_code, FT_LOAD_RENDER))
@@ -161,37 +162,41 @@ int init_freetype(FT_Library *ft_library, FT_Face *ft_face, const char *font_fil
     FT_Error ft_error;
 
 #ifdef DYNAMIC_APP
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
     char * error_message = NULL;
-    FT_Error (*FT_Init_FreeType)(FT_Library*);
-    FT_Error (*FT_New_Face)(FT_Library, const char*, FT_Long, FT_Face *);
-    FT_Error (*FT_Set_Pixel_Sizes)(FT_Face, FT_UInt, FT_UInt);
+    FT_Error (*FT_Init_FreeType)(FT_Library*) = NULL;
+    FT_Error (*FT_New_Face)(FT_Library, const char*, FT_Long, FT_Face *) = NULL;
+    FT_Error (*FT_Set_Pixel_Sizes)(FT_Face, FT_UInt, FT_UInt) = NULL;
 
     d_freetype = dlopen(LIBFREETYPE_PATH, RTLD_LAZY);
     if(!d_freetype)
     {
-    	fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+    	fprintf(stderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
     	return EXIT_FAILURE;
     }
-    FT_Init_FreeType = dlsym(d_freetype, "FT_Init_FreeType");
-    error = dlerror();
-    if(error != NULL) 
+    *(void **) (&FT_Init_FreeType) = dlsym(d_freetype, "FT_Init_FreeType");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_Init_FreeType\"); fail : %s\n", __func__, error);
+    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_Init_FreeType\"); fail : %s\n", __func__, error_message);
     	return EXIT_FAILURE;
     }
-    FT_New_Face = dlsym(d_freetype, "FT_New_Face");
-    error = dlerror();
-    if(error != NULL) 
+    *(void **) (&FT_New_Face) = dlsym(d_freetype, "FT_New_Face");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_New_Face\"); failed : %s\n", __func__, error);
+    	fprintf(stderr, "[ERROR]: %s -- dlsym(dfreetype, \"FT_New_Face\"); failed : %s\n", __func__, error_message);
     	return EXIT_FAILURE;
     }
-    FT_Set_Pixel_Sizes = dlsym(d_freetype, "FT_Set_Pixel_Sizes");
-    error = dlerror();
-    if(error != NULL) {
-    	printf("[ERROR]: %s -- dlsym(dfreetype, \"FT_Set_Pixel_Sizes\"); failed : %s\n", __func__, error);
+    *(void **) (&FT_Set_Pixel_Sizes) = dlsym(d_freetype, "FT_Set_Pixel_Sizes");
+    error_message = dlerror();
+    if(error_message != NULL) 
+    {
+    	printf("[ERROR]: %s -- dlsym(dfreetype, \"FT_Set_Pixel_Sizes\"); failed : %s\n", __func__, error_message);
     	return EXIT_FAILURE;
     }
+#pragma GCC diagnostic pop
 #endif
 
     if((ft_error = FT_Init_FreeType(ft_library)))
@@ -267,23 +272,26 @@ int destruct(const size_t rows, unsigned char **image, APP_OPTION *app_opt, FT_F
     size_t count = 0;
 
 #ifdef DYNAMIC_APP
-    FT_Error (*FT_Done_FreeType)(FT_Library);
- 	FT_Error (*FT_Render_Glyph)(FT_GlyphSlot, FT_Render_Mode); 
-    char * error = NULL;
-    FT_Done_Face = dlsym(d_freetype, "FT_Done_Face");
-    error = dlerror();
-    if(error != NULL) 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+    FT_Error (*FT_Done_FreeType)(FT_Library) = NULL;
+ 	FT_Error (*FT_Done_Face)( FT_Face) = NULL; 
+    char * error_message = NULL;
+    *(void **) (&FT_Done_Face) = dlsym(d_freetype, "FT_Done_Face");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-    	printf("dlsym(d_freetype, \"FT_Done_Face\"); failed : %s\n", error);
+    	printf("dlsym(d_freetype, \"FT_Done_Face\"); failed : %s\n", error_message);
     	return EXIT_FAILURE;
     }
-    FT_Done_FreeType = dlsym(d_freetype, "FT_Done_FreeType");
-    error = dlerror();
-    if(error != NULL) 
+    *(void **) (&FT_Done_FreeType) = dlsym(d_freetype, "FT_Done_FreeType");
+    error_message = dlerror();
+    if(error_message != NULL) 
     {
-    	printf("dlsym(d_freetype, \"FT_Done_FreeType\"); failed : %s\n", error);
+    	printf("dlsym(d_freetype, \"FT_Done_FreeType\"); failed : %s\n", error_message);
     	return EXIT_FAILURE;
     }
+#pragma GCC diagnostic pop
 #endif
     
     for(; count < rows; count++)
@@ -306,64 +314,81 @@ int render_png_file(FILE *output_file, const size_t width, const size_t height, 
     unsigned char* rowptr = NULL;
 
 #ifdef DYNAMIC_APP
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
     char * error_message = NULL;
-    png_structp (*png_create_write_struct)(png_const_charp, png_voidp, png_error_ptr, png_error_ptr);
-    png_infop (*png_create_info_struct)(png_structp);
-    jmp_buf* (*png_jmpbuf)(png_structp, png_longjmp_ptr, size_t);
-    void (*png_init_io)(png_structp, png_FILE_p);
-    void (*png_set_IHDR)(png_structp, png_infop, png_uint_32, png_uint_32, int, int, int, int, int);
-    void (*png_write_info)(png_structp, png_infop);
-    void (*png_write_row)(png_structp, png_const_bytep);
-    void (*png_write_end)(png_structp, png_infop);
+    png_structp (*png_create_write_struct)(png_const_charp, png_voidp, png_error_ptr, png_error_ptr) = NULL;
+    png_infop (*png_create_info_struct)(png_structp) = NULL;
+    jmp_buf* (*png_set_longjmp_fn)(png_structp, png_longjmp_ptr, size_t) = NULL;
+    void (*png_init_io)(png_structp, png_FILE_p) = NULL;
+    void (*png_set_IHDR)(png_structp, png_infop, png_uint_32, png_uint_32, int, int, int, int, int) = NULL;
+    void (*png_write_info)(png_structp, png_infop) = NULL;
+    void (*png_write_row)(png_structp, png_const_bytep) = NULL;
+    void (*png_write_end)(png_structp, png_infop) = NULL;
+    void (*png_destroy_write_struct)(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr) = NULL;
 
     d_libpng = dlopen(LIBPNG_PATH, RTLD_LAZY);
     if(!d_libpng)
     {
-    	fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+    	fprintf(stderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
     	return EXIT_FAILURE;
     }
-    png_create_write_struct = dlsym(d_libpng, "png_create_write_struct");
+    *(void **) (&png_create_write_struct) = dlsym(d_libpng, "png_create_write_struct");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_create_write_struct\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_create_info_struct = dlsym(d_libpng, "png_create_info_struct");
+    *(void **) (&png_create_info_struct) = dlsym(d_libpng, "png_create_info_struct");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_create_info_struct\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_init_io = dlsym(d_libpng, "png_init_io");
+    *(void **) (&png_init_io) = dlsym(d_libpng, "png_init_io");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_init_io\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_set_IHDR = dlsym(d_libpng, "png_set_IHDR");
+    *(void **) (&png_set_IHDR) = dlsym(d_libpng, "png_set_IHDR");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(d_libpng, \"png_set_IHDR\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_write_info = dlsym(d_libpng, "png_write_info");
+    *(void **) (&png_write_info) = dlsym(d_libpng, "png_write_info");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_write_info\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_write_row = dlsym(d_libpng, "png_write_row");
+    *(void **) (&png_write_row) = dlsym(d_libpng, "png_write_row");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_write_row\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
-    png_write_end = dlsym(d_libpng, "png_write_end");
+    *(void **) (&png_set_longjmp_fn) = dlsym(d_libpng, "png_set_longjmp_fn");
+    error_message = dlerror();
+    if(error_message != NULL) 
+    {
+        printf("dlsym(dlibpng, \"png_set_longjmp_fn\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+    *(void **) (&png_write_end) = dlsym(d_libpng, "png_write_end");
     error_message = dlerror();
     if(error_message != NULL) {
         printf("dlsym(dlibpng, \"png_write_end\"); failed : %s\n", error_message);
         return EXIT_FAILURE;
     }
+    *(void **) (&png_destroy_write_struct) = dlsym(d_libpng, "png_destroy_write_struct");
+    error_message = dlerror();
+    if(error_message != NULL) {
+        printf("dlsym(dlibpng, \"png_destroy_write_struct\"); failed : %s\n", error_message);
+        return EXIT_FAILURE;
+    }
+#pragma GCC diagnostic pop
 #endif
     
     if((png_output = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
@@ -393,6 +418,12 @@ int render_png_file(FILE *output_file, const size_t width, const size_t height, 
 
     png_set_IHDR(png_output, png_info, (png_uint_32) width, (png_uint_32) height, 8, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
+    if (setjmp(png_jmpbuf(png_output)))
+	{
+		fprintf(stderr, "ERROR: png write\n");
+		return EXIT_FAILURE;
+	}
+
     png_write_info(png_output, png_info);
 
     if (setjmp(png_jmpbuf(png_output)))
@@ -420,9 +451,9 @@ int render_png_file(FILE *output_file, const size_t width, const size_t height, 
 int init_zlib_shared(void)
 {
     d_zlib = dlopen(LIBZ_PATH, RTLD_NOW | RTLD_GLOBAL);
-	if(!dzlib) 
+	if(!d_zlib) 
 	{
-		fprintf(srderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
+		fprintf(stderr, "[ERROR]: %s -- dlopen fail : %s\n", __func__, dlerror());
 		return EXIT_FAILURE;
 	}
     return EXIT_SUCCESS;

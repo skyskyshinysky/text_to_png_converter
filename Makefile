@@ -2,6 +2,11 @@ lib_dir=lib
 export STATIC_LIB_DIR=$(shell realpath $(addprefix lib/,static))
 export SHARED_LIB_DIR=$(shell realpath $(addprefix lib/,shared))
 
+export SHARED_LIBZ_PATH=$(shell realpath $(addprefix $(SHARED_LIB_DIR)/,libz.so.1.2.11))
+export SHARED_LIBPNG_PATH=$(shell realpath $(addprefix $(SHARED_LIB_DIR)/,libpng16.so))
+export SHARED_LIBFREETYPE_PATH=$(shell realpath $(addprefix $(SHARED_LIB_DIR)/,libfreetype.so.6.12.6))
+
+
 all: clean create_lib_dir static shared
 
 create_lib_dir:
